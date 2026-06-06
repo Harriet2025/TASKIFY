@@ -559,23 +559,24 @@ mark.search-highlight {
    MODAL
    ═══════════════════════════════════════════════════ */
 .modal-backdrop {
-  position: fixed; inset: 0; background: rgba(28,25,23,0.55);
-  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center;
+  position: fixed; inset: 0; background: rgba(28,25,23,0.6);
+  display: none; align-items: center; justify-content: center;
   padding: 1.5rem; z-index: 1000;
-  opacity: 0; pointer-events: none;
-  transition: opacity 200ms var(--ease);
 }
-.modal-backdrop.open { opacity: 1; pointer-events: auto; }
+.modal-backdrop.open {
+  display: flex;
+  animation: fadeIn 200ms var(--ease) both;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .modal {
   background: var(--surface); border-radius: var(--r-xl);
   box-shadow: var(--sh-xl); border: 1.5px solid var(--line);
   width: 100%; max-width: 540px; max-height: 92vh; overflow-y: auto;
-  transform: translateY(20px) scale(0.97);
-  transition: transform 280ms var(--spring), background 0.25s;
+  animation: slideUp 280ms var(--spring) both;
+  transition: background 0.25s;
 }
-.modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 .modal-header {
   display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
@@ -627,25 +628,24 @@ mark.search-highlight {
    CONFIRM DIALOG
    ═══════════════════════════════════════════════════ */
 .confirm-backdrop {
-  position: fixed; inset: 0; background: rgba(28,25,23,0.6);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  display: flex; align-items: center; justify-content: center;
+  position: fixed; inset: 0; background: rgba(28,25,23,0.65);
+  display: none; align-items: center; justify-content: center;
   padding: 1.5rem; z-index: 2000;
-  opacity: 0; pointer-events: none;
-  transition: opacity 200ms var(--ease);
 }
-.confirm-backdrop.open { opacity: 1; pointer-events: auto; }
+.confirm-backdrop.open {
+  display: flex;
+  animation: fadeIn 200ms var(--ease) both;
+}
 
 .confirm-dialog {
   background: var(--surface); border-radius: var(--r-xl);
   box-shadow: var(--sh-xl); border: 1.5px solid var(--line);
   width: 100%; max-width: 380px; padding: 2rem 1.75rem 1.75rem;
   text-align: center;
-  transform: translateY(16px) scale(0.96);
-  transition: transform 260ms var(--spring), background 0.25s;
   display: flex; flex-direction: column; gap: 0.6rem;
+  animation: slideUp 280ms var(--spring) both;
+  transition: background 0.25s;
 }
-.confirm-backdrop.open .confirm-dialog { transform: translateY(0) scale(1); }
 
 .confirm-icon { font-size: 2.5rem; line-height: 1; margin-bottom: 0.25rem; }
 .confirm-dialog h4 { font-size: 1.15rem; font-weight: 800; color: var(--ink); }

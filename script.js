@@ -106,6 +106,7 @@ function daysUntilDue(task) {
 function openModal() {
     el.modalBackdrop.classList.add('open');
     el.modalBackdrop.setAttribute('aria-hidden', 'false');
+    el.modalBackdrop.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     setTimeout(() => el.titleInput.focus(), 80);
 }
@@ -113,6 +114,7 @@ function openModal() {
 function closeModal() {
     el.modalBackdrop.classList.remove('open');
     el.modalBackdrop.setAttribute('aria-hidden', 'true');
+    el.modalBackdrop.style.display = 'none';
     document.body.style.overflow = '';
 }
 
@@ -122,6 +124,7 @@ function openConfirm(id) {
     state.deletingTaskId = id;
     el.confirmBackdrop.classList.add('open');
     el.confirmBackdrop.setAttribute('aria-hidden', 'false');
+    el.confirmBackdrop.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     setTimeout(() => el.confirmOk.focus(), 80);
 }
@@ -130,6 +133,7 @@ function closeConfirm() {
     state.deletingTaskId = null;
     el.confirmBackdrop.classList.remove('open');
     el.confirmBackdrop.setAttribute('aria-hidden', 'true');
+    el.confirmBackdrop.style.display = 'none';
     document.body.style.overflow = '';
 }
 
@@ -153,24 +157,24 @@ el.confirmBackdrop.addEventListener('click', (e) => {
 
 // ── Shortcuts dialog ──────────────────────────────────────────────────────────
 
-el.shortcutsBtn.addEventListener('click', () => {
+function openShortcuts() {
     el.shortcutsBackdrop.classList.add('open');
     el.shortcutsBackdrop.setAttribute('aria-hidden', 'false');
+    el.shortcutsBackdrop.style.display = 'flex';
     document.body.style.overflow = 'hidden';
-});
+}
 
-el.shortcutsClose.addEventListener('click', () => {
+function closeShortcuts() {
     el.shortcutsBackdrop.classList.remove('open');
     el.shortcutsBackdrop.setAttribute('aria-hidden', 'true');
+    el.shortcutsBackdrop.style.display = 'none';
     document.body.style.overflow = '';
-});
+}
 
+el.shortcutsBtn.addEventListener('click', openShortcuts);
+el.shortcutsClose.addEventListener('click', closeShortcuts);
 el.shortcutsBackdrop.addEventListener('click', (e) => {
-    if (e.target === el.shortcutsBackdrop) {
-        el.shortcutsBackdrop.classList.remove('open');
-        el.shortcutsBackdrop.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-    }
+    if (e.target === el.shortcutsBackdrop) closeShortcuts();
 });
 
 // ── API ───────────────────────────────────────────────────────────────────────
@@ -266,13 +270,13 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         if (modalOpen) { resetForm(); closeModal(); }
         if (confirmOpen) closeConfirm();
-        if (shortcutsOpen) { el.shortcutsBackdrop.classList.remove('open'); document.body.style.overflow = ''; }
+        if (shortcutsOpen) closeShortcuts();
         return;
     }
     if (typing || modalOpen || confirmOpen) return;
     if (e.key === 'n' || e.key === 'N') { resetForm(); openModal(); }
     if (e.key === 'd' || e.key === 'D') toggleDark();
-    if (e.key === '?') { el.shortcutsBackdrop.classList.add('open'); el.shortcutsBackdrop.setAttribute('aria-hidden','false'); document.body.style.overflow = 'hidden'; }
+    if (e.key === '?') openShortcuts();
     if (e.key === '/') { e.preventDefault(); el.searchInput.focus(); }
 });
 
