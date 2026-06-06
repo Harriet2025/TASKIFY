@@ -1,11 +1,7 @@
 -- Taskify Database Setup
--- Run this file in phpMyAdmin or the MySQL CLI
+-- Run this in Coolify's MySQL terminal or any MySQL client
 
-CREATE DATABASE IF NOT EXISTS taskify
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE taskify;
+USE `default`;
 
 CREATE TABLE IF NOT EXISTS tasks (
     id          INT AUTO_INCREMENT PRIMARY KEY,
