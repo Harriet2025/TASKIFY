@@ -1,0 +1,6 @@
+Options -Indexes
+RewriteEngine On
+
+# Route all API requests to api/tasks.php
+RewriteRule ^api/tasks$ api/tasks.php [L,QSA]
+RewriteRule ^api/tasks/(.*)$ api/tasks.php?id=$1 [L,QSA]
