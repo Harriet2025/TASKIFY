@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taskify — Task Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+<!-- ── Toast container ── -->
+<div id="toast-container"></div>
+
+<!-- ══════════════════════════════════════════
+     MODAL
+══════════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <div class="modal-header">
+            <div>
+                <p class="section-label" id="formLabel">New task</p>
+                <h3 id="modalTitle">Add a new task</h3>
+            </div>
+            <button class="modal-close" id="modalClose" aria-label="Close" type="button">&#x2715;</button>
+        </div>
+
+        <form class="task-form" id="taskForm" novalidate>
+            <input type="hidden" id="taskIdInput" />
+
+            <label class="form-field">
+                <span>Task title <span class="req">*</span></span>
+                <input id="titleInput" type="text" placeholder="What needs to be done?" autocomplete="off" />
+                <small class="field-error" id="titleError"></small>
+            </label>
+
+            <label class="form-field">
+                <span>Description</span>
+                <textarea id="descriptionInput" rows="3" placeholder="Add context, steps, or relevant links…"></textarea>
+            </label>
+
+            <div class="form-row">
+                <label class="form-field">
+                    <span>Priority <span class="req">*</span></span>
+                    <select id="priorityInput">
+                        <option value="Low">🔵  Low</option>
+                        <option value="Medium" selected>🟢  Medium</option>
+                        <option value="High">🔴  High</option>
+                    </select>
+                    <small class="field-error" id="priorityError"></small>
+                </label>
+
+                <label class="form-field">
+                    <span>Status <span class="req">*</span></span>
+                    <select id="statusInput">
+                        <option value="To Do" selected>To Do</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Done">Done</option>
+                    </select>
+                    <small class="field-error" id="statusError"></small>
+                </label>
+            </div>
+
+            <label class="form-field">
+                <span>Due date <span class="req">*</span></span>
+                <input id="dueDateInput" type="date" />
+                <small class="field-error" id="dueDateError"></small>
+            </label>
+
+            <div class="modal-actions">
+                <button class="btn-ghost" type="button" id="clearButton">Cancel</button>
+                <button class="btn-primary" type="submit" id="submitButton">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span id="submitLabel">Create task</span>
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     APP SHELL
+══════════════════════════════════════════ -->
+<div class="app-shell">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+    <div class="sidebar-inner">
+        <div class="brand-row">
+            <div class="brand-mark">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 11 12 14 22 4"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+            </div>
+            <div>
+                <p class="eyebrow">Dashboard</p>
+                <h1>Taskify</h1>
+            </div>
+        </div>
+
+        <p class="sidebar-copy">Organise your work, track priorities, and ship everything on time.</p>
+
+        <hr class="sidebar-divider" />
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <span class="stat-icon">📋</span>
+                <strong id="statTotal">—</strong>
+                <span>Total</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">⚡</span>
+                <strong id="statActive">—</strong>
+                <span>Active</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">✅</span>
+                <strong id="statDone">—</strong>
+                <span>Done</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🔥</span>
+                <strong id="statHigh">—</strong>
+                <span>High priority</span>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <span>MySQL · PHP REST API</span>
+            <span id="sidebarDate"></span>
+        </div>
+    </div><!-- /.sidebar-inner -->
+    </aside>
+
+    <!-- ── Main workspace ── -->
+    <main class="workspace">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <p class="section-label">Today's tasks</p>
+                <h2>Your Workspace</h2>
+                <p class="topbar-date" id="topbarDate"></p>
+            </div>
+            <button class="btn-primary" type="button" id="newTaskButton">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                New task
+            </button>
+        </header>
+
+        <!-- Filters -->
+        <div class="filters-bar">
+            <label class="filter-wrap search-wrap">
+                <svg class="filter-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input id="searchInput" type="search" placeholder="Search tasks by title or description…" />
+            </label>
+
+            <label class="filter-wrap">
+                <span class="filter-label">Status</span>
+                <select id="statusFilterInput">
+                    <option value="All">All</option>
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                </select>
+            </label>
+
+            <label class="filter-wrap">
+                <span class="filter-label">Priority</span>
+                <select id="priorityFilterInput">
+                    <option value="All">All</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </label>
+        </div>
+
+        <!-- Task list -->
+        <section class="tasks-section">
+            <div class="tasks-header">
+                <h3 id="taskCountHeading">Loading…</h3>
+            </div>
+            <div class="task-list" id="taskList">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading your tasks…</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="./script.js"></script>
+</body>
+</html>
