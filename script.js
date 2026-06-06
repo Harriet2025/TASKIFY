@@ -416,16 +416,16 @@ function render() {
     renderFormState();
 }
 
-function animateCount(el, target) {
-    const start = parseInt(el.textContent) || 0;
-    if (start === target) { el.textContent = target; return; }
+function animateCount(node, target) {
+    const start = parseInt(node.textContent) || 0;
+    if (start === target) { node.textContent = target; return; }
     const dur = 400, step = 16;
     let elapsed = 0;
     const timer = setInterval(() => {
         elapsed += step;
         const progress = Math.min(elapsed / dur, 1);
         const ease = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.round(start + (target - start) * ease);
+        node.textContent = Math.round(start + (target - start) * ease);
         if (progress >= 1) clearInterval(timer);
     }, step);
 }
@@ -450,26 +450,29 @@ function renderStats() {
 }
 
 function renderStatusStrip() {
-    const todo = state.tasks.filter((t) => t.status === 'To Do').length;
-    const inProg = state.tasks.filter((t) => t.status === 'In Progress').length;
-    const done = state.tasks.filter((t) => t.status === 'Done').length;
+    const todo    = state.tasks.filter((t) => t.status === 'To Do').length;
+    const inProg  = state.tasks.filter((t) => t.status === 'In Progress').length;
+    const done    = state.tasks.filter((t) => t.status === 'Done').length;
     const overdue = state.tasks.filter(isOverdue).length;
+    const sf = state.statusFilter;
 
     el.statusStrip.innerHTML = `
-        <button class="strip-pill ${state.statusFilter==='All'?'active':''}" data-filter="All">All <span>${state.tasks.length}</span></button>
-        <button class="strip-pill ${state.statusFilter==='To Do'?'active':''}" data-filter="To Do">To Do <span>${todo}</span></button>
-        <button class="strip-pill ${state.statusFilter==='In Progress'?'active':''}" data-filter="In Progress">In Progress <span>${inProg}</span></button>
-        <button class="strip-pill ${state.statusFilter==='Done'?'active':''}" data-filter="Done">Done <span>${done}</span></button>
-        ${overdue > 0 ? `<button class="strip-pill strip-pill-overdue ${state.statusFilter==='Overdue'?'active':''}" data-filter="Overdue">⚠️ Overdue <span>${overdue}</span></button>` : ''}
+        <button class="strip-pill${sf==='All'?' active':''}" data-filter="All">All <span>${state.tasks.length}</span></button>
+        <button class="strip-pill${sf==='To Do'?' active':''}" data-filter="To Do">To Do <span>${todo}</span></button>
+        <button class="strip-pill${sf==='In Progress'?' active':''}" data-filter="In Progress">In Progress <span>${inProg}</span></button>
+        <button class="strip-pill${sf==='Done'?' active':''}" data-filter="Done">Done <span>${done}</span></button>
+        ${overdue > 0 ? `<button class="strip-pill strip-pill-overdue${sf==='Overdue'?' active':''}" data-filter="Overdue">⚠️ Overdue <span>${overdue}</span></button>` : ''}
     `;
-    el.statusStrip.querySelectorAll('.strip-pill').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            state.statusFilter = btn.getAttribute('data-filter');
-            el.statusFilterInput.value = state.statusFilter === 'Overdue' ? 'All' : state.statusFilter;
-            render();
-        });
-    });
 }
+
+// Single delegated listener — set up once, not on every render
+el.statusStrip.addEventListener('click', (e) => {
+    const btn = e.target.closest('.strip-pill');
+    if (!btn) return;
+    state.statusFilter = btn.getAttribute('data-filter');
+    el.statusFilterInput.value = state.statusFilter === 'Overdue' ? 'All' : state.statusFilter;
+    render();
+});
 
 function getEmptyMessage() {
     if (state.search) return { icon: '🔍', title: `No results for "${state.search}"`, body: 'Try a different search term or clear the search.' };
