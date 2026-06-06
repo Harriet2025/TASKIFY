@@ -782,7 +782,8 @@ kbd {
   .btn-task, .btn-danger { flex: 1; justify-content: center; font-size: 0.75rem; padding: 0.5rem 0.4rem; white-space: nowrap; }
 
   /* Modal: bottom sheet */
-  .modal-backdrop { align-items: flex-end; padding: 0; }
+  .modal-backdrop { align-items: flex-end; padding: 0; display: none; }
+  .modal-backdrop.open { display: flex; }
   .modal { max-width: 100%; width: 100%; border-radius: var(--r-xl) var(--r-xl) 0 0; max-height: 95vh; }
   .modal-header { padding: 1.25rem 1.25rem 1rem; }
   .modal-header h3 { font-size: 1.1rem; }
@@ -792,7 +793,8 @@ kbd {
   .form-row { grid-template-columns: 1fr; }
 
   /* Confirm dialog */
-  .confirm-backdrop { align-items: flex-end; padding: 0; }
+  .confirm-backdrop { align-items: flex-end; padding: 0; display: none; }
+  .confirm-backdrop.open { display: flex; }
   .confirm-dialog { max-width: 100%; border-radius: var(--r-xl) var(--r-xl) 0 0; }
   .confirm-actions { flex-direction: column-reverse; }
   .confirm-actions button { width: 100%; justify-content: center; }
