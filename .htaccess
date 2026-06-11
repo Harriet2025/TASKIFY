@@ -1,6 +1,44 @@
 Options -Indexes
-RewriteEngine On
+Options -MultiViews
 
-# Route all API requests to api/tasks.php
-RewriteRule ^api/tasks$ api/tasks.php [L,QSA]
-RewriteRule ^api/tasks/(.*)$ api/tasks.php?id=$1 [L,QSA]
+# Disable directory listing
+IndexIgnore *
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# PHP settings compatible with InfinityFree
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+</IfModule>
+
+# Enable rewrite engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle CORS preflight
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+</IfModule>
+
+# Block direct access to config file
+<Files "config.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Block access to sensitive files
+<FilesMatch "\.(sql|log|env|sh|md|yml|yaml|json|lock)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Allow JSON responses from API
+<FilesMatch "\.php$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</FilesMatch>
